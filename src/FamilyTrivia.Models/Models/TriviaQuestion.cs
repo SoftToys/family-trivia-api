@@ -10,12 +10,21 @@
         /// </value>
         public string Text { get; set; }
 
+
         /// <summary>
-        /// Gets or sets a value indicating whether to show the next question when this question anwered
+        /// Gets or sets the next action.
         /// </summary>
         /// <value>
-        /// <c>true</c> if to show the next question when this question anwered; otherwise, <c>false</c>.
+        /// The next action.
         /// </value>
-        public bool AutoPlayNextQuestion { get; set; }
+        public ActionOnResolve NextAction { get; set; }
+
+    }
+
+    public enum ActionOnResolve
+    {
+        MoveToNextQuestion,
+        ShowNotification
+
     }
 }
