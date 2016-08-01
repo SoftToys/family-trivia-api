@@ -9,11 +9,11 @@ using FamilyTrivia.Contracts;
 namespace FamilyTrivia.Api.Host.Controllers
 {
     [Route("api/[controller]")]
-    public class GameController : Controller
+    public class GameManageController : Controller
     {
         private IGamesRepositoryService _gamesService;
 
-        public GameController(IGamesRepositoryService gamesService)
+        public GameManageController(IGamesRepositoryService gamesService)
         {
             _gamesService = gamesService;
 
@@ -21,7 +21,7 @@ namespace FamilyTrivia.Api.Host.Controllers
         // GET api/values
         [HttpGet]
         public IEnumerable<TriviaGame> Get()
-        {
+        {            
             //Request.HttpContext.User.Identity.Name - need to have autorization..
             return _gamesService.GetByOwner(Request.HttpContext.User.Identity.Name);
         }
