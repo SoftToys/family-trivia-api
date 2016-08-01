@@ -12,7 +12,7 @@ namespace FamilyTrivia.Services
 
         public Guid AddUpdate(TriviaGame game)
         {
-            // TODO: Add to persistency and return the id - just testing
+            // TODO: Add to persistency and return the id - 
             throw new NotImplementedException();
         }
         public TriviaGame GetById(Guid id)
