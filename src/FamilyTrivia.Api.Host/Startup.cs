@@ -38,7 +38,8 @@ namespace FamilyTrivia.Api.Host
         {
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
-            services.AddSingleton<IGamesRepositoryService, GamesRepositoryService>();
+            //services.AddSingleton<IGamesRepositoryService, GamesRepositoryService>();
+            services.AddSingleton<IGamesRepositoryService, MemoryGameRepositoryService>(); // using the memo
             services.AddMvc();
         }
 
