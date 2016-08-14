@@ -39,6 +39,7 @@ namespace FamilyTrivia.Api.Host
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
             services.AddSingleton<IGamesRepositoryService, GamesRepositoryService>();
+            services.AddSwaggerGen();
             services.AddMvc();
         }
 
@@ -53,6 +54,11 @@ namespace FamilyTrivia.Api.Host
             app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseMvc();
+
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui assets (HTML, JS, CSS etc.)
+            app.UseSwaggerUi();
         }
     }
 }
