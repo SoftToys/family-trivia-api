@@ -46,7 +46,7 @@ namespace FamilyTrivia.Services
 
         public IEnumerable<TriviaGame> GetByOwner(string owner)
         {
-            return _dictionaryDb.Values.Where(tg => owner == null || String.Equals(tg.OwnerId, owner, StringComparison.OrdinalIgnoreCase)).OrderByDescending(g => g.UpdateTime);
+            return _dictionaryDb.Values.Where(tg => owner == null || String.Equals(tg.OwnerId, owner, StringComparison.OrdinalIgnoreCase)).OrderBy(g => g.UpdateTime);
         }
     }
 }
