@@ -14,16 +14,17 @@ namespace FamilyTrivia.Services
 
         public MemoryGameRepositoryService()
         {
-             _dictionaryDb = new Dictionary<Guid, TriviaGame>();
+            _dictionaryDb = new Dictionary<Guid, TriviaGame>();
 
         }
 
         public Guid AddUpdate(TriviaGame game)
         {
             // add a new game
-            if(game.Id == Guid.Empty)
+            if (game.Id == Guid.Empty)
             {
                 game.Id = Guid.NewGuid();
+                game.CreateTime = game.UpdateTime = DateTime.Now;
 
                 _dictionaryDb.Add(game.Id, game);
 
@@ -33,8 +34,9 @@ namespace FamilyTrivia.Services
             else
             {
                 _dictionaryDb[game.Id] = game;
+                game.UpdateTime = DateTime.Now;
                 return game.Id;
-            }            
+            }
         }
 
         public TriviaGame GetById(Guid id)
@@ -44,7 +46,7 @@ namespace FamilyTrivia.Services
 
         public IEnumerable<TriviaGame> GetByOwner(string owner)
         {
-            return _dictionaryDb.Values.Where(tg => String.Equals(tg.OwnerId, owner, StringComparison.OrdinalIgnoreCase));
+            return _dictionaryDb.Values.Where(tg => owner == null || String.Equals(tg.OwnerId, owner, StringComparison.OrdinalIgnoreCase)).OrderByDescending(g => g.UpdateTime);
         }
     }
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace FamilyTrivia.Contracts.Models
 {
@@ -14,7 +16,11 @@ namespace FamilyTrivia.Contracts.Models
         /// <value>
         /// The identifier.
         /// </value>
+        [JsonProperty("_id")]
         public Guid Id { get; set; }
+
+        [JsonProperty("_name")]
+        public string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the owner identifier.
@@ -22,6 +28,7 @@ namespace FamilyTrivia.Contracts.Models
         /// <value>
         /// The owner identifier.
         /// </value>
+        [JsonProperty("_owner")]
         public string OwnerId { get; set; }
 
         /// <summary>
@@ -38,6 +45,7 @@ namespace FamilyTrivia.Contracts.Models
         /// <value>
         /// The Trivia Items.
         /// </value>
+        [JsonProperty("_items")]
         public IEnumerable<TriviaItem> Items { get; set; }
 
         /// <summary>
@@ -47,5 +55,10 @@ namespace FamilyTrivia.Contracts.Models
         /// The participates.
         /// </value>
         public IEnumerable<User> Participates { get; set; }
+
+        public DateTime CreateTime { get; set; }
+
+        public DateTime UpdateTime { get; set; }
+
     }
 }
