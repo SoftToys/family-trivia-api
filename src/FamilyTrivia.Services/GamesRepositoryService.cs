@@ -29,7 +29,7 @@ namespace FamilyTrivia.Services
             CloudTable table = tableClient.GetTableReference("people");
             await table.CreateIfNotExistsAsync();
 
-            // Create a new customer entity.
+            // Create a new customer entity. 
             TriviaGameEntity g1 = new TriviaGameEntity(game.OwnerId, game.Id.ToString());
 
 
