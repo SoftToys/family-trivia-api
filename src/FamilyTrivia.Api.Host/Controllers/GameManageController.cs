@@ -37,9 +37,9 @@ namespace FamilyTrivia.Api.Host.Controllers
 
         // POST api/values
         [HttpPost]
-        public Guid Post([FromBody]TriviaGame game)
+        public async Task<Guid> Post([FromBody]TriviaGame game)
         {
-            return _gamesService.AddUpdate(game);
+            return await _gamesService.AddUpdate(game);
         }
 
         // PUT api/values/5

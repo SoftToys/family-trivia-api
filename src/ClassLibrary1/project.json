@@ -1,8 +1,7 @@
-{
+﻿{
   "version": "1.0.0-*",
 
   "dependencies": {
-    "FamilyTrivia.Contracts": "1.0.0-*",
     "Microsoft.NETCore.App": {
       "version": "1.0.0",
       "type": "platform"
@@ -11,7 +10,7 @@
   },
 
   "frameworks": {
-
+   
     "netcoreapp1.0": {
       "imports": [
         "dotnet5.6",

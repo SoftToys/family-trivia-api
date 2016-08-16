@@ -18,7 +18,18 @@ namespace FamilyTrivia.Services
 
         }
 
-        public Guid AddUpdate(TriviaGame game)
+       
+        public TriviaGame GetById(Guid id)
+        {
+            return _dictionaryDb[id];
+        }
+
+        public IEnumerable<TriviaGame> GetByOwner(string owner)
+        {
+            return _dictionaryDb.Values.Where(tg => owner == null || String.Equals(tg.OwnerId, owner, StringComparison.OrdinalIgnoreCase)).OrderBy(g => g.UpdateTime);
+        }
+
+        Task<Guid> IGamesRepositoryService.AddUpdate(TriviaGame game)
         {
             // add a new game
             if (game.Id == Guid.Empty)
@@ -28,25 +39,14 @@ namespace FamilyTrivia.Services
 
                 _dictionaryDb.Add(game.Id, game);
 
-                return game.Id;
             }
             // else - update
             else
             {
                 _dictionaryDb[game.Id] = game;
-                game.UpdateTime = DateTime.Now;
-                return game.Id;
+                game.UpdateTime = DateTime.Now;                
             }
-        }
-
-        public TriviaGame GetById(Guid id)
-        {
-            return _dictionaryDb[id];
-        }
-
-        public IEnumerable<TriviaGame> GetByOwner(string owner)
-        {
-            return _dictionaryDb.Values.Where(tg => owner == null || String.Equals(tg.OwnerId, owner, StringComparison.OrdinalIgnoreCase)).OrderBy(g => g.UpdateTime);
+            return Task.FromResult(game.Id);
         }
     }
 }
