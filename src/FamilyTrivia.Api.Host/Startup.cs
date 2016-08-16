@@ -39,8 +39,15 @@ namespace FamilyTrivia.Api.Host
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
             //services.AddSingleton<IGamesRepositoryService, GamesRepositoryService>();
-            services.AddSingleton<IGamesRepositoryService, MemoryGameRepositoryService>(); // using the memo
+            services.AddSingleton<IGamesRepositoryService, MemoryGameRepositoryService>(); // using the memo                        
+            services.AddSwaggerGen();
             services.AddMvc();
+            services.AddCors(o => o.AddPolicy("Light", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
@@ -54,6 +61,12 @@ namespace FamilyTrivia.Api.Host
             app.UseApplicationInsightsExceptionTelemetry();
 
             app.UseMvc();
+
+            app.UseSwagger();
+            app.UseCors("Light");
+
+            // Enable middleware to serve swagger-ui assets (HTML, JS, CSS etc.)
+            app.UseSwaggerUi();
         }
     }
 }

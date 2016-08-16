@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using FamilyTrivia.Contracts.Models;
 using FamilyTrivia.Contracts;
+using Microsoft.AspNetCore.Cors;
 
 namespace FamilyTrivia.Api.Host.Controllers
 {
+    [EnableCors("Light")]
     [Route("api/[controller]")]
     public class GameManageController : Controller
     {

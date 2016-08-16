@@ -1,4 +1,6 @@
-﻿namespace FamilyTrivia.Contracts.Models
+﻿using Newtonsoft.Json;
+
+namespace FamilyTrivia.Contracts.Models
 {
     public class TriviaQuestion
     {
@@ -8,6 +10,7 @@
         /// <value>
         /// The text.
         /// </value>
+        [JsonProperty("txt")]
         public string Text { get; set; }
 
 
