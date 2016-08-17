@@ -39,7 +39,9 @@ namespace FamilyTrivia.Api.Host
             // Add framework services.
             services.AddApplicationInsightsTelemetry(Configuration);
             //services.AddSingleton<IGamesRepositoryService, GamesRepositoryService>();
-            services.AddSingleton<IGamesRepositoryService, MemoryGameRepositoryService>(); // using the memo                        
+            //services.AddSingleton<IGamesRepositoryService, MemoryGameRepositoryService>(); // using the memo                        
+            services.AddSingleton<IGamesRepositoryService, AzureRepositoryService>(); // using the memo                        
+            
             services.AddSwaggerGen();
             services.AddMvc();
             services.AddCors(o => o.AddPolicy("Light", builder =>
