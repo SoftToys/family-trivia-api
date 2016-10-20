@@ -8,7 +8,7 @@ namespace FamilyTrivia.Contracts
     public interface IGamesRepositoryService
     {
         Task<Guid> AddUpdate(TriviaGame game);
-        TriviaGame GetById(Guid id);
-        IEnumerable<TriviaGame> GetByOwner(string owner);
+        Task<TriviaGame> GetById(Guid id);
+        Task<IEnumerable<TriviaGame>>  GetByOwner(string owner);
     }
 }

@@ -48,5 +48,15 @@ namespace FamilyTrivia.Services
             }
             return Task.FromResult(game.Id);
         }
+
+        Task<TriviaGame> IGamesRepositoryService.GetById(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<IEnumerable<TriviaGame>> IGamesRepositoryService.GetByOwner(string owner)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

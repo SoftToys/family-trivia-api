@@ -22,17 +22,17 @@ namespace FamilyTrivia.Api.Host.Controllers
         }
         // GET api/values
         [HttpGet]
-        public IEnumerable<TriviaGame> Get()
-        {            
+        public Task<IEnumerable<TriviaGame>> Get()
+        {
             //Request.HttpContext.User.Identity.Name - need to have autorization..
-            return _gamesService.GetByOwner(Request.HttpContext.User.Identity.Name);
+            return _gamesService.GetByOwner(Request.HttpContext.User.Identity.Name);            
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public TriviaGame Get(Guid id) 
+        public async Task<TriviaGame> Get(Guid id) 
         {
-            return _gamesService.GetById(id);
+            return await _gamesService.GetById(id);
         }
 
         // POST api/values
