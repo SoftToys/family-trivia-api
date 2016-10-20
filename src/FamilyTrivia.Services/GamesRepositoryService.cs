@@ -25,6 +25,7 @@ namespace FamilyTrivia.Services
 
         public Task<IEnumerable<TriviaGame>> GetByOwner(string owner)
         {
+            // implement
             throw new NotImplementedException();
         }
     }
