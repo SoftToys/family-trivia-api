@@ -3,20 +3,13 @@
 
   "dependencies": {
     "FamilyTrivia.Contracts": "1.0.0-*",
-    "Microsoft.NETCore.App": {
-      "version": "1.0.0",
-      "type": "platform"
-    },
     "WindowsAzure.Storage": "7.2.0"
-  },
-
+  },  
   "frameworks": {
+    "net452": {
+      "dependencies": {
 
-    "netcoreapp1.0": {
-      "imports": [
-        "dotnet5.6",
-        "portable-net45+win8"
-      ]
+      }
     }
   }
 }

@@ -1,29 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FamilyTrivia.Contracts;
 using FamilyTrivia.Contracts.Models;
-//using Microsoft.Win; // Namespace for CloudConfigurationManager 
 using Microsoft.WindowsAzure.Storage; // Namespace for CloudStorageAccount
 using Microsoft.WindowsAzure.Storage.Table; // Namespace for Table storage types
-using System.IO;
-using System.Text;
-using System.Xml.Serialization;
-//using Microsoft.WindowsAzure.
-
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace FamilyTrivia.Services
 
 {
-
-
-
     public class AzureRepositoryService : IGamesRepositoryService
     {
 
-        private CloudStorageAccount _storageAccount;
+        // Members
 
+        private CloudStorageAccount _storageAccount;  // holds azure storage account 
+
+
+        // Methods
         public AzureRepositoryService()
         {
             // Parse the connection string and return a reference to the storage account.
@@ -32,6 +27,7 @@ namespace FamilyTrivia.Services
 
         public async Task<Guid> AddUpdate(TriviaGame game)
         {
+            // in case of new game
             if (game.Id == Guid.Empty)
             {
                 game.Id = Guid.NewGuid();
@@ -52,7 +48,6 @@ namespace FamilyTrivia.Services
 
             // Create a new customer entity. 
             TriviaGameEntity triviaGameEntity = new TriviaGameEntity(game.OwnerId, game.Id.ToString());
-            //TriviaGameEntity triviaGameEntity = new TriviaGameEntity(game.OwnerId, game.OwnerId);
 
             triviaGameEntity.StartTime = game.StartTime;
             triviaGameEntity.UpdateTime = game.UpdateTime;
@@ -68,10 +63,6 @@ namespace FamilyTrivia.Services
             // Execute the insert operation.
             await table.ExecuteAsync(insertOperation);
 
-            var x = await this.GetById(game.Id);
-
-            var y = await this.GetByOwner(game.OwnerId);
-
             return game.Id;
         }
 
@@ -85,31 +76,37 @@ namespace FamilyTrivia.Services
             CloudTable table = tableClient.GetTableReference("Games");
 
             // Construct the query operation for all customer entities where PartitionKey="Smith".
-            //TableQuery<TriviaGameEntity> query = new TableQuery<TriviaGameEntity>().Where(TableQuery.GenerateFilterCondition("Id", QueryComparisons.Equal, id.ToString()));
-            // Create a retrieve operation that takes a customer entity.
-            TableOperation retrieveOperation = TableOperation.Retrieve<TriviaGameEntity>("amir", id.ToString());
+            TableQuery<TriviaGameEntity> query = new TableQuery<TriviaGameEntity>().Where(TableQuery.GenerateFilterConditionForGuid("Id", QueryComparisons.Equal, id));
 
-            // Execute the retrieve operation.
-            TableResult retrievedResult = await table.ExecuteAsync(retrieveOperation);
+            // Create a list to hold query result
+            List<TriviaGame> triviaGameList = new List<TriviaGame>();
 
-            TriviaGameEntity triviaGameEntity = (TriviaGameEntity)(retrievedResult.Result);
-
-            return new TriviaGame()
+            foreach (TriviaGameEntity triviaGameEntity in table.ExecuteQuery(query))
             {
-                Id = triviaGameEntity.Id,
-                Items = triviaGameEntity.Items,
-                Name = triviaGameEntity.Name,
-                CreateTime = triviaGameEntity.CreateTime,
-                OwnerId = triviaGameEntity.OwnerId,
-                Participates = triviaGameEntity.Participates,
-                StartTime = triviaGameEntity.StartTime,
-                UpdateTime = triviaGameEntity.UpdateTime
-            };
+                triviaGameList.Add(new TriviaGame()
+                {
+                    Id = triviaGameEntity.Id,
+                    Items = triviaGameEntity.Items,
+                    Name = triviaGameEntity.Name,
+                    CreateTime = triviaGameEntity.CreateTime,
+                    OwnerId = triviaGameEntity.OwnerId,
+                    Participates = triviaGameEntity.Participates,
+                    StartTime = triviaGameEntity.StartTime,
+                    UpdateTime = triviaGameEntity.UpdateTime
+                }
+                     );
+
+                // TODO: ugly return...how to skip the for loop
+                return triviaGameList[0];
+            }
+
+            return null;
         }
 
         public async Task<IEnumerable<TriviaGame>> GetByOwner(string owner)
         {
             // input validation
+            // TODO: how come no owner ? no login?
             if (owner == null)
             {
                 return null;
@@ -122,39 +119,81 @@ namespace FamilyTrivia.Services
             CloudTable table = tableClient.GetTableReference("Games");
 
             // Construct the query operation for all customer entities where PartitionKey="Smith".
-            TableQuery<TriviaGameEntity> query = new TableQuery<TriviaGameEntity>().Where(TableQuery.GenerateFilterCondition("Owner", QueryComparisons.Equal, owner));
+            TableQuery<TriviaGameEntity> query = new TableQuery<TriviaGameEntity>().Where(TableQuery.GenerateFilterCondition("OwnerId", QueryComparisons.Equal, owner));
 
-            // Create a retrieve operation that takes a customer entity.
-            TableOperation retrieveOperation = TableOperation.Retrieve<TriviaGameEntity>(owner, owner);
+            List<TriviaGame> triviaGameList = new List<TriviaGame>();
 
-            // Execute the retrieve operation.
-            TableResult retrievedResult = await table.ExecuteAsync(retrieveOperation);
-
-            TriviaGameEntity triviaGameEntity = (TriviaGameEntity)(retrievedResult.Result);
-
-            TriviaGame x = new TriviaGame()
+            foreach (TriviaGameEntity triviaGameEntity in table.ExecuteQuery(query))
             {
-                Id = triviaGameEntity.Id,
-                Items = triviaGameEntity.Items,
-                Name = triviaGameEntity.Name,
-                CreateTime = triviaGameEntity.CreateTime,
-                OwnerId = triviaGameEntity.OwnerId,
-                Participates = triviaGameEntity.Participates,
-                StartTime = triviaGameEntity.StartTime,
-                UpdateTime = triviaGameEntity.UpdateTime
-            };
-
-            List<TriviaGame> list = new List<TriviaGame>();
-            // Print the fields for each customer.
-            // foreach(TriviaGameEntity entity in await table.ExecuteAsync(query))
-            {
-                //   Console.WriteLine("{0}, {1}\t{2}\t{3}", entity.PartitionKey, entity.RowKey,
-                //       entity.Email, entity.PhoneNumber);
+                triviaGameList.Add(new TriviaGame()
+                {
+                    Id = triviaGameEntity.Id,
+                    Items = triviaGameEntity.Items,
+                    Name = triviaGameEntity.Name,
+                    CreateTime = triviaGameEntity.CreateTime,
+                    OwnerId = triviaGameEntity.OwnerId,
+                    Participates = triviaGameEntity.Participates,
+                    StartTime = triviaGameEntity.StartTime,
+                    UpdateTime = triviaGameEntity.UpdateTime
+                }
+                     );
             }
 
-            list.Add(x);
-            return list;
+            return triviaGameList;
         }
 
+        public async void testblob()
+        {
+
+            // blob
+            // Create the blob client.
+            CloudBlobClient blobClient = _storageAccount.CreateCloudBlobClient();
+
+            // Retrieve a reference to a container.
+            CloudBlobContainer container = blobClient.GetContainerReference("myblob");
+
+            // Create the container if it doesn't already exist.
+            await container.CreateIfNotExistsAsync();
+
+            await container.SetPermissionsAsync(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
+
+            // Retrieve reference to a blob named "myblob".
+            CloudBlockBlob blockBlob = container.GetBlockBlobReference("sami.jpg");
+
+
+            // Create or overwrite the "myblob" blob with contents from a local file.
+            using (var fileStream = System.IO.File.OpenRead(@"d:\DSC03897.JPG"))
+            {
+                await blockBlob.UploadFromStreamAsync(fileStream);
+            }
+
+            //BlobContinuationToken bct = null;
+
+            // list container references
+            // Loop over items within the container and output the length and URI.
+            foreach (IListBlobItem item in container.ListBlobs())
+            {
+                if (item.GetType() == typeof(CloudBlockBlob))
+                {
+                    CloudBlockBlob blob = (CloudBlockBlob)item;
+
+                    Console.WriteLine("Block blob of length {0}: {1}", blob.Properties.Length, blob.Uri);
+
+                }
+                else if (item.GetType() == typeof(CloudPageBlob))
+                {
+                    CloudPageBlob pageBlob = (CloudPageBlob)item;
+
+                    Console.WriteLine("Page blob of length {0}: {1}", pageBlob.Properties.Length, pageBlob.Uri);
+
+                }
+                else if (item.GetType() == typeof(CloudBlobDirectory))
+                {
+                    CloudBlobDirectory directory = (CloudBlobDirectory)item;
+
+                    Console.WriteLine("Directory: {0}", directory.Uri);
+                }
+            }
+        }
     }
 }
