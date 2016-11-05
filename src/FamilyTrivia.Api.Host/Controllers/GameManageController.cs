@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using FamilyTrivia.Contracts.Models;
 using FamilyTrivia.Contracts;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FamilyTrivia.Api.Host.Controllers
 {
+    [Authorize(policy: "HasId")]
     [EnableCors("Light")]
     [Route("api/[controller]")]
     public class GameManageController : Controller
@@ -25,7 +27,7 @@ namespace FamilyTrivia.Api.Host.Controllers
         public Task<IEnumerable<TriviaGame>> Get()
         {
             //Request.HttpContext.User.Identity.Name - need to have autorization..
-            return _gamesService.GetByOwner(Request.HttpContext.User.Identity.Name);            
+            return _gamesService.GetByOwner(User.Identity.Name);            
         }
 
         // GET api/values/5
@@ -51,6 +53,7 @@ namespace FamilyTrivia.Api.Host.Controllers
         [HttpPost]
         public async Task<Guid> Post([FromBody]TriviaGame game)
         {
+            var theUser = User.Identity.Name;
             return await _gamesService.AddUpdate(game);
         }
 

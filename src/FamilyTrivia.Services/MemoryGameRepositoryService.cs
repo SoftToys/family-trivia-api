@@ -57,12 +57,13 @@ namespace FamilyTrivia.Services
 
         Task<TriviaGame> IGamesRepositoryService.GetById(Guid id)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(_dictionaryDb[id]);
         }
 
         Task<IEnumerable<TriviaGame>> IGamesRepositoryService.GetByOwner(string owner)
         {
-            throw new NotImplementedException();
+            IEnumerable<TriviaGame> res = _dictionaryDb.Values.ToList();
+            return Task.FromResult(res);
         }
     }
 }

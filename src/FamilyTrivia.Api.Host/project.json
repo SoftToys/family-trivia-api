@@ -13,7 +13,13 @@
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
     "FamilyTrivia.Services": "1.0.0-*",
     "Swashbuckle": "6.0.0-beta901",
-    "WindowsAzure.Storage": "7.2.0"
+    "WindowsAzure.Storage": "7.2.0",
+    "Microsoft.AspNetCore.Identity": "1.0.0",
+    "Microsoft.AspNetCore.Authentication.JwtBearer": "1.0.0",
+    "Microsoft.AspNetCore.Cors": "1.0.0",
+    "Microsoft.AspNet.Identity.Core": "2.2.1",
+    "Microsoft.AspNetCore.Authentication.Facebook": "1.0.0",
+    "Facebook": "7.0.6"
   },
 
   "tools": {
