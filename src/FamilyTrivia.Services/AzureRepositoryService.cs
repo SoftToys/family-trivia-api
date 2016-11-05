@@ -6,6 +6,8 @@ using FamilyTrivia.Contracts.Models;
 using Microsoft.WindowsAzure.Storage; // Namespace for CloudStorageAccount
 using Microsoft.WindowsAzure.Storage.Table; // Namespace for Table storage types
 using Microsoft.WindowsAzure.Storage.Blob;
+using System.IO;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FamilyTrivia.Services
 
@@ -59,9 +61,9 @@ namespace FamilyTrivia.Services
 
             // Create the TableOperation object that inserts the customer entity.
             TableOperation insertOperation = TableOperation.Insert(triviaGameEntity);
-
             // Execute the insert operation.
             await table.ExecuteAsync(insertOperation);
+
 
             return game.Id;
         }
@@ -109,6 +111,13 @@ namespace FamilyTrivia.Services
             // TODO: how come no owner ? no login?
             if (owner == null)
             {
+                var sevenItems = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+                Guid id = new Guid();
+                _InsertImageByQuestionId(id, sevenItems);
+
+
+                _GetImageByQuestionId(id);
+
                 return null;
             }
 
@@ -142,7 +151,58 @@ namespace FamilyTrivia.Services
             return triviaGameList;
         }
 
-        public async void testblob()
+        public ContentResult GetByQuestionId(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        private string _GetImageByQuestionId(Guid id)
+        {
+            // Create the blob client.
+            CloudBlobClient blobClient = _storageAccount.CreateCloudBlobClient();
+
+            // Retrieve reference to a previously created container.
+            CloudBlobContainer container = blobClient.GetContainerReference("questionsimages");
+
+            // Retrieve reference to a blob named "photo1.jpg".
+            CloudBlockBlob blockBlob = container.GetBlockBlobReference(id +".jpg");
+
+            // redirect
+            return blockBlob.Uri.AbsoluteUri;
+
+            // download
+            //return blockBlob.DownloadToStream(new OutputStream());
+            //Response.AddHeader("Content-Disposition", "attachment; filename=" + name); // force download
+            //container.GetBlobReference(name).DownloadToStream(Response.OutputStream);
+    
+
+            // Save blob contents to a local file 
+            //using (var fileStream = System.IO.File.OpenWrite(@"path\myfile"))
+            //{
+            //    blockBlob.DownloadToStream(fileStream);
+            //}         
+        
+        }
+
+        private void _InsertImageByQuestionId(Guid id, byte[] image)
+        {
+            // Create the blob client.
+            CloudBlobClient blobClient = _storageAccount.CreateCloudBlobClient();
+
+            // Retrieve reference to a previously created container.
+            CloudBlobContainer container = blobClient.GetContainerReference("questionsimages");
+
+            // Retrieve reference to a blob named "photo1.jpg".
+            CloudBlockBlob blockBlob = container.GetBlockBlobReference(id + ".jpg");
+
+            // upload            
+            using (var stream = new MemoryStream(image, writable: false))
+            {
+                blockBlob.UploadFromStream(stream);
+            }
+        }
+
+        public async void testblob(TriviaItem itemId)
         {
 
             // blob
@@ -158,7 +218,7 @@ namespace FamilyTrivia.Services
             await container.SetPermissionsAsync(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Blob });
 
             // Retrieve reference to a blob named "myblob".
-            CloudBlockBlob blockBlob = container.GetBlockBlobReference("sami.jpg");
+            CloudBlockBlob blockBlob = container.GetBlockBlobReference(itemId.Id + ".jpg");
 
 
             // Create or overwrite the "myblob" blob with contents from a local file.
@@ -166,8 +226,6 @@ namespace FamilyTrivia.Services
             {
                 await blockBlob.UploadFromStreamAsync(fileStream);
             }
-
-            //BlobContinuationToken bct = null;
 
             // list container references
             // Loop over items within the container and output the length and URI.

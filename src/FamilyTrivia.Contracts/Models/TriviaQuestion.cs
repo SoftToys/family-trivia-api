@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FamilyTrivia.Contracts.Models
 {
@@ -12,6 +13,11 @@ namespace FamilyTrivia.Contracts.Models
         /// </value>
         [JsonProperty("txt")]
         public string Text { get; set; }
+
+        // Image
+        public byte[] Image { get; set; }
+
+
 
 
         /// <summary>

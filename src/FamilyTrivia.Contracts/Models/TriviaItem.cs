@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 namespace FamilyTrivia.Contracts.Models
 {
     public class TriviaItem
-    {    
+    {
+        [JsonProperty("_id")]
+        public Guid Id { get; set; }
+
         [JsonProperty("_question")]    
         public TriviaQuestion ItemQuestion { get; set; }
 

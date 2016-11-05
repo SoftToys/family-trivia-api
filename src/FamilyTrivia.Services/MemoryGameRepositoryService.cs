@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FamilyTrivia.Contracts.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FamilyTrivia.Services
 {
@@ -27,6 +28,11 @@ namespace FamilyTrivia.Services
         public IEnumerable<TriviaGame> GetByOwner(string owner)
         {
             return _dictionaryDb.Values.Where(tg => owner == null || String.Equals(tg.OwnerId, owner, StringComparison.OrdinalIgnoreCase)).OrderBy(g => g.UpdateTime);
+        }
+
+        public ContentResult GetByQuestionId(Guid id)
+        {
+            throw new NotImplementedException();
         }
 
         Task<Guid> IGamesRepositoryService.AddUpdate(TriviaGame game)

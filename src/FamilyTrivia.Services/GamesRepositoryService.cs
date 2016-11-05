@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FamilyTrivia.Services
 {
@@ -26,6 +27,11 @@ namespace FamilyTrivia.Services
         public Task<IEnumerable<TriviaGame>> GetByOwner(string owner)
         {
             // implement   
+            throw new NotImplementedException();
+        }
+
+        public ContentResult GetByQuestionId(Guid id)
+        {
             throw new NotImplementedException();
         }
     }
