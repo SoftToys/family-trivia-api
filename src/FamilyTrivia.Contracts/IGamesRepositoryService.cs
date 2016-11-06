@@ -10,8 +10,6 @@ namespace FamilyTrivia.Contracts
     {
         Task<Guid> AddUpdate(TriviaGame game);
         Task<TriviaGame> GetById(Guid id);
-        Task<IEnumerable<TriviaGame>>  GetByOwner(string owner);
-
-        ContentResult GetByQuestionId(Guid id);
+        Task<IEnumerable<TriviaGame>>  GetByOwner(string owner);        
     }
 }

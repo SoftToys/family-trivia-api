@@ -38,8 +38,8 @@ namespace FamilyTrivia.Api.Host.Controllers
         }
 
         // GET api/values/5
-        [HttpGet("{questionid}")]
-        ContentResult GetByQuestionId(Guid id)
+        [HttpGet("getbyquestion/{id}")]
+        public ContentResult GetByQuestionId(Guid id)
         {
             //ContentResult a = new ContentResult();
             //return new ContentResult(_gamesService.GetByQuestionId(id));

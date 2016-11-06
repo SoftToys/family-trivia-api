@@ -34,6 +34,21 @@ namespace FamilyTrivia.Services
             {
                 game.Id = Guid.NewGuid();
                 game.CreateTime = game.UpdateTime = DateTime.Now;
+
+                // create guid for questions
+                // in case of images, insert to blob db
+                foreach (var item in game.Items)
+                {
+                    item.Id = Guid.NewGuid();
+                    if (item.ItemQuestion.IsImage)
+                    {
+                        // temporary - how to get uploaded picture ?
+                        byte[] arr = new byte []{ 1, 1, 2};
+                                                
+                        // insert picture to blob
+                        _InsertImageByQuestionId(item.Id, arr);
+                    }
+                }
             }
             // else - update
             else
@@ -63,7 +78,6 @@ namespace FamilyTrivia.Services
             TableOperation insertOperation = TableOperation.Insert(triviaGameEntity);
             // Execute the insert operation.
             await table.ExecuteAsync(insertOperation);
-
 
             return game.Id;
         }
@@ -111,13 +125,6 @@ namespace FamilyTrivia.Services
             // TODO: how come no owner ? no login?
             if (owner == null)
             {
-                var sevenItems = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
-                Guid id = new Guid();
-                _InsertImageByQuestionId(id, sevenItems);
-
-
-                _GetImageByQuestionId(id);
-
                 return null;
             }
 
@@ -134,26 +141,29 @@ namespace FamilyTrivia.Services
 
             foreach (TriviaGameEntity triviaGameEntity in table.ExecuteQuery(query))
             {
-                triviaGameList.Add(new TriviaGame()
-                {
-                    Id = triviaGameEntity.Id,
-                    Items = triviaGameEntity.Items,
-                    Name = triviaGameEntity.Name,
-                    CreateTime = triviaGameEntity.CreateTime,
-                    OwnerId = triviaGameEntity.OwnerId,
-                    Participates = triviaGameEntity.Participates,
-                    StartTime = triviaGameEntity.StartTime,
-                    UpdateTime = triviaGameEntity.UpdateTime
-                }
-                     );
+                TriviaGame tg = new TriviaGame();
+                
+                tg.Name = triviaGameEntity.Name;
+                tg.CreateTime = triviaGameEntity.CreateTime;
+                tg.OwnerId = triviaGameEntity.OwnerId;
+                tg.Participates = triviaGameEntity.Participates;
+                tg.StartTime = triviaGameEntity.StartTime;
+                tg.UpdateTime = triviaGameEntity.UpdateTime;
+                tg.Items = triviaGameEntity.Items;
+
+                // for each question - set image uri if exist
+                foreach (var item in tg.Items)
+                {                      
+                    if (item.ItemQuestion.IsImage)
+                    {
+                        item.ItemQuestion.ImageUri = _GetImageByQuestionId(item.Id);
+                    }
+
+                }    
+                
             }
 
             return triviaGameList;
-        }
-
-        public ContentResult GetByQuestionId(Guid id)
-        {
-            throw new NotImplementedException();
         }
 
         private string _GetImageByQuestionId(Guid id)
@@ -165,7 +175,7 @@ namespace FamilyTrivia.Services
             CloudBlobContainer container = blobClient.GetContainerReference("questionsimages");
 
             // Retrieve reference to a blob named "photo1.jpg".
-            CloudBlockBlob blockBlob = container.GetBlockBlobReference(id +".jpg");
+            CloudBlockBlob blockBlob = container.GetBlockBlobReference(id + ".jpg");
 
             // redirect
             return blockBlob.Uri.AbsoluteUri;
@@ -174,14 +184,14 @@ namespace FamilyTrivia.Services
             //return blockBlob.DownloadToStream(new OutputStream());
             //Response.AddHeader("Content-Disposition", "attachment; filename=" + name); // force download
             //container.GetBlobReference(name).DownloadToStream(Response.OutputStream);
-    
+
 
             // Save blob contents to a local file 
             //using (var fileStream = System.IO.File.OpenWrite(@"path\myfile"))
             //{
             //    blockBlob.DownloadToStream(fileStream);
             //}         
-        
+
         }
 
         private void _InsertImageByQuestionId(Guid id, byte[] image)

@@ -67,7 +67,8 @@ namespace FamilyTrivia.Api.Host.Controllers
             ClaimsIdentity identity = new ClaimsIdentity(new GenericIdentity(email, "TokenAuth"),
                 new[] {
                     new System.Security.Claims.Claim(ClaimTypes.Sid,id.ToString(), ClaimValueTypes.Integer),
-                    new System.Security.Claims.Claim(ClaimTypes.MobilePhone,email.ToString(), ClaimValueTypes.String),
+                    new System.Security.Claims.Claim(ClaimTypes.Email,email.ToString(), ClaimValueTypes.String),
+                    new System.Security.Claims.Claim("id",email, ClaimValueTypes.String),
                     new System.Security.Claims.Claim("UserIP",Request.HttpContext.Connection.RemoteIpAddress.ToString(), ClaimValueTypes.String)
                 });
 
