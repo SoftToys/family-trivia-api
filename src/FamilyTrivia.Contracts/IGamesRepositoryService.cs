@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using FamilyTrivia.Contracts.Models;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FamilyTrivia.Contracts
 {
@@ -9,6 +10,6 @@ namespace FamilyTrivia.Contracts
     {
         Task<Guid> AddUpdate(TriviaGame game);
         Task<TriviaGame> GetById(Guid id);
-        Task<IEnumerable<TriviaGame>>  GetByOwner(string owner);
+        Task<IEnumerable<TriviaGame>>  GetByOwner(string owner);        
     }
 }

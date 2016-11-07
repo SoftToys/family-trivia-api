@@ -2,7 +2,8 @@
   "version": "1.0.0-*",
 
   "dependencies": {
-    "Microsoft.IdentityModel.Tokens": "5.0.0",
+    "Microsoft.AspNetCore.Mvc.Core": "1.0.0",
+    "Microsoft.IdentityModel.Tokens": "5.0.0",    
     //    "FamilyTrivia.Contracts": "1.0.0-*",
     "WindowsAzure.Storage": "7.2.0"
   },

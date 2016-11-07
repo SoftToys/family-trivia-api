@@ -37,6 +37,18 @@ namespace FamilyTrivia.Api.Host.Controllers
             return await _gamesService.GetById(id);
         }
 
+        // GET api/values/5
+        [HttpGet("getbyquestion/{id}")]
+        public ContentResult GetByQuestionId(Guid id)
+        {
+            //ContentResult a = new ContentResult();
+            //return new ContentResult(_gamesService.GetByQuestionId(id));
+            //Response.AppendHeader("Content-Disposition", cd.ToString());
+            //return File(document.Data, document.ContentType);
+            return null;
+
+        }
+
         // POST api/values
         [HttpPost]
         public async Task<Guid> Post([FromBody]TriviaGame game)
