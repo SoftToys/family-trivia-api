@@ -159,7 +159,10 @@ namespace FamilyTrivia.Services
                         item.ItemQuestion.ImageUri = _GetImageByQuestionId(item.Id);
                     }
 
-                }    
+                }
+
+                // add game 
+                triviaGameList.Add(tg);    
                 
             }
 
