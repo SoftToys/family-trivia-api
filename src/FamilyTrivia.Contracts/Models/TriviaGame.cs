@@ -59,6 +59,7 @@ namespace FamilyTrivia.Contracts.Models
         public DateTime CreateTime { get; set; }
 
         public DateTime UpdateTime { get; set; }
+        public int Level { get; set; }
 
     }
 }
