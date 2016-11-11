@@ -7,12 +7,13 @@ using Microsoft.WindowsAzure.Storage; // Namespace for CloudStorageAccount
 using Microsoft.WindowsAzure.Storage.Table; // Namespace for Table storage types
 using Microsoft.WindowsAzure.Storage.Blob;
 using System.IO;
+using System.Linq;
 
 namespace FamilyTrivia.Services
 
 {
     public class AzureRepositoryService : IGamesRepositoryService
-    {        
+    {
         // Members
 
         private CloudStorageAccount _storageAccount;  // holds azure storage account 
@@ -41,8 +42,8 @@ namespace FamilyTrivia.Services
                     if (item.ItemQuestion.IsImage)
                     {
                         // temporary - how to get uploaded picture ?
-                        byte[] arr = new byte []{ 1, 1, 2};
-                                                
+                        byte[] arr = new byte[] { 1, 1, 2 };
+
                         // insert picture to blob
                         _InsertImageByQuestionId(item.Id, arr);
                     }
@@ -73,7 +74,7 @@ namespace FamilyTrivia.Services
             triviaGameEntity.Name = game.Name;
 
             // Create the TableOperation object that inserts the customer entity.
-            TableOperation insertOperation = TableOperation.Insert(triviaGameEntity);
+            TableOperation insertOperation = TableOperation.InsertOrReplace(triviaGameEntity);
             // Execute the insert operation.
             await table.ExecuteAsync(insertOperation);
 
@@ -140,7 +141,7 @@ namespace FamilyTrivia.Services
             foreach (TriviaGameEntity triviaGameEntity in table.ExecuteQuery(query))
             {
                 TriviaGame tg = new TriviaGame();
-                
+
                 tg.Name = triviaGameEntity.Name;
                 tg.CreateTime = triviaGameEntity.CreateTime;
                 tg.OwnerId = triviaGameEntity.OwnerId;
@@ -152,7 +153,7 @@ namespace FamilyTrivia.Services
 
                 // for each question - set image uri if exist
                 foreach (var item in tg.Items)
-                {                      
+                {
                     if (item.ItemQuestion.IsImage)
                     {
                         item.ItemQuestion.ImageUri = _GetImageByQuestionId(item.Id);
@@ -161,11 +162,11 @@ namespace FamilyTrivia.Services
                 }
 
                 // add game 
-                triviaGameList.Add(tg);    
-                
+                triviaGameList.Add(tg);
+
             }
 
-            return triviaGameList;
+            return triviaGameList.OrderByDescending(t => t.UpdateTime);
         }
 
         private string _GetImageByQuestionId(Guid id)
