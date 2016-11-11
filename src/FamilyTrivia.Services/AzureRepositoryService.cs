@@ -7,14 +7,12 @@ using Microsoft.WindowsAzure.Storage; // Namespace for CloudStorageAccount
 using Microsoft.WindowsAzure.Storage.Table; // Namespace for Table storage types
 using Microsoft.WindowsAzure.Storage.Blob;
 using System.IO;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FamilyTrivia.Services
 
 {
     public class AzureRepositoryService : IGamesRepositoryService
-    {
-
+    {        
         // Members
 
         private CloudStorageAccount _storageAccount;  // holds azure storage account 
@@ -150,6 +148,7 @@ namespace FamilyTrivia.Services
                 tg.StartTime = triviaGameEntity.StartTime;
                 tg.UpdateTime = triviaGameEntity.UpdateTime;
                 tg.Items = triviaGameEntity.Items;
+                tg.Id = triviaGameEntity.Id;
 
                 // for each question - set image uri if exist
                 foreach (var item in tg.Items)
