@@ -62,6 +62,7 @@ namespace FamilyTrivia.Api.Host.Controllers
         public async Task<Guid> Post([FromBody]TriviaGame game)
         {
             var theUser = User.Identity.Name;
+            game.OwnerId = theUser;
             return await _gamesService.AddUpdate(game);
         }
 
