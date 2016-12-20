@@ -30,6 +30,14 @@ namespace FamilyTrivia.Api.Host.Controllers
             return _gamesService.GetByOwner(User.Identity.Name);            
         }
 
+        // GET api/values
+        [HttpGet("rating")]
+        public Task<IEnumerable<UserRating>> GetUserRating()
+        {
+            //Request.HttpContext.User.Identity.Name - need to have autorization..
+            return _gamesService.GetUserRating();            
+        }
+
         // GET api/values/5
         [HttpGet("{id}")]
         public async Task<TriviaGame> Get(Guid id) 

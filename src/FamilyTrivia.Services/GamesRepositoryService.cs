@@ -34,5 +34,10 @@ namespace FamilyTrivia.Services
         {
             throw new NotImplementedException();
         }
+
+        public Task<IEnumerable<UserRating>> GetUserRating()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

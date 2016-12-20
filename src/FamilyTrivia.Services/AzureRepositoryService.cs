@@ -8,6 +8,7 @@ using Microsoft.WindowsAzure.Storage.Table; // Namespace for Table storage types
 using Microsoft.WindowsAzure.Storage.Blob;
 using System.IO;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace FamilyTrivia.Services
 
@@ -43,8 +44,8 @@ namespace FamilyTrivia.Services
                     if (item.ItemQuestion.IsImage)
                     {
                         // temporary - how to get uploaded picture ?
-                        byte[] arr = new byte []{ 1, 1, 2};
-                                                
+                        byte[] arr = new byte[] { 1, 1, 2 };
+
                         // insert picture to blob
                         _InsertImageByQuestionId(item.Id, arr);
                     }
@@ -119,6 +120,41 @@ namespace FamilyTrivia.Services
             return null;
         }
 
+
+        public async Task<IEnumerable<UserRating>> GetUserRating()
+        {
+            // Create the table client.
+            CloudTableClient tableClient = _storageAccount.CreateCloudTableClient();
+
+            // Create the CloudTable object that represents the "people" table.
+            CloudTable table = tableClient.GetTableReference("UserRating");
+
+            // Construct the query operation for all customer entities where PartitionKey="Smith".            
+            List<UserRating> userRatingList = new List<UserRating>();
+            //userRatingEntity = table.ExecuteQuery(new TableQuery<UserRatingEntity>()).ToList();
+            // Create a list to hold query result
+
+
+            // Construct the query operation for all customer entities where PartitionKey="Smith".
+            TableQuery<UserRatingEntity> query = new TableQuery<UserRatingEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "user"));
+
+            // Print the fields for each customer.
+            foreach (UserRatingEntity userRatingEntity in table.ExecuteQuery(query))
+            { 
+                UserRating userRating = new UserRating();
+
+                userRating.UserName = userRatingEntity.RowKey;
+                userRating.Attempted = userRatingEntity.Attempted;
+                userRating.Scored = userRatingEntity.Scored;
+
+                // add user rating 
+                userRatingList.Add(userRating);
+
+            }
+
+            return userRatingList;
+        }
+
         public async Task<IEnumerable<TriviaGame>> GetByOwner(string owner)
         {
             // input validation
@@ -142,7 +178,7 @@ namespace FamilyTrivia.Services
             foreach (TriviaGameEntity triviaGameEntity in table.ExecuteQuery(query))
             {
                 TriviaGame tg = new TriviaGame();
-                
+
                 tg.Name = triviaGameEntity.Name;
                 tg.CreateTime = triviaGameEntity.CreateTime;
                 tg.OwnerId = triviaGameEntity.OwnerId;
@@ -153,7 +189,7 @@ namespace FamilyTrivia.Services
 
                 // for each question - set image uri if exist
                 foreach (var item in tg.Items)
-                {                      
+                {
                     if (item.ItemQuestion.IsImage)
                     {
                         item.ItemQuestion.ImageUri = _GetImageByQuestionId(item.Id);
@@ -162,8 +198,8 @@ namespace FamilyTrivia.Services
                 }
 
                 // add game 
-                triviaGameList.Add(tg);    
-                
+                triviaGameList.Add(tg);
+
             }
 
             return triviaGameList;
@@ -266,5 +302,5 @@ namespace FamilyTrivia.Services
                 }
             }
         }
-    }
+    }    
 }

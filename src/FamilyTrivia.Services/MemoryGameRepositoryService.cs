@@ -35,6 +35,11 @@ namespace FamilyTrivia.Services
             throw new NotImplementedException();
         }
 
+        public Task<IEnumerable<UserRating>> GetUserRating()
+        {
+            throw new NotImplementedException();
+        }
+
         Task<Guid> IGamesRepositoryService.AddUpdate(TriviaGame game)
         {
             // add a new game
