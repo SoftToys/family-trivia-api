@@ -7,6 +7,7 @@ using FamilyTrivia.Contracts.Models;
 using FamilyTrivia.Contracts;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace FamilyTrivia.Api.Host.Controllers
 {
@@ -27,7 +28,7 @@ namespace FamilyTrivia.Api.Host.Controllers
         public Task<IEnumerable<TriviaGame>> Get()
         {
             //Request.HttpContext.User.Identity.Name - need to have autorization..
-            return _gamesService.GetByOwner(User.Identity.Name);            
+            return _gamesService.GetByOwner(User.Identity.Name);
         }
 
         // GET api/values
@@ -35,12 +36,13 @@ namespace FamilyTrivia.Api.Host.Controllers
         public Task<IEnumerable<UserRating>> GetUserRating()
         {
             //Request.HttpContext.User.Identity.Name - need to have autorization..
-            return _gamesService.GetUserRating();            
+            return _gamesService.GetUserRating();
         }
+
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public async Task<TriviaGame> Get(Guid id) 
+        public async Task<TriviaGame> Get(Guid id)
         {
             return await _gamesService.GetById(id);
         }
@@ -64,6 +66,18 @@ namespace FamilyTrivia.Api.Host.Controllers
             var theUser = User.Identity.Name;
             game.OwnerId = theUser;
             return await _gamesService.AddUpdate(game);
+        }
+
+        // POST api/values
+        [HttpPost("bla")]
+
+        public void OnAnswerAttempt([FromBody]AnswerAttempt aa)
+        {
+
+            var theUser = User.Identity.Name;
+            _gamesService.OnAnswerAttempt(User.Identity.Name, aa);
+            // game.OwnerId = theUser;
+            // return await _gamesService.AddUpdate(game);
         }
 
         // PUT api/values/5

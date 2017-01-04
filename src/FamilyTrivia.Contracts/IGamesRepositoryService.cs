@@ -13,5 +13,6 @@ namespace FamilyTrivia.Contracts
         Task<IEnumerable<TriviaGame>>  GetByOwner(string owner);
 
         Task<IEnumerable<UserRating>> GetUserRating();
+        void OnAnswerAttempt(string userName, AnswerAttempt aa);
     }
 }

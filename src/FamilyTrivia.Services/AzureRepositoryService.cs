@@ -7,7 +7,6 @@ using Microsoft.WindowsAzure.Storage; // Namespace for CloudStorageAccount
 using Microsoft.WindowsAzure.Storage.Table; // Namespace for Table storage types
 using Microsoft.WindowsAzure.Storage.Blob;
 using System.IO;
-using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
 namespace FamilyTrivia.Services
@@ -139,7 +138,7 @@ namespace FamilyTrivia.Services
 
             // Print the fields for each customer.
             foreach (UserRatingEntity userRatingEntity in table.ExecuteQuery(query))
-            { 
+            {
                 UserRating userRating = new UserRating();
 
                 userRating.UserName = userRatingEntity.RowKey;
@@ -302,5 +301,62 @@ namespace FamilyTrivia.Services
                 }
             }
         }
-    }    
-}
+
+        
+
+        public void OnAnswerAttempt(string userName, AnswerAttempt aa)
+        {
+
+            // Create the table client.
+            CloudTableClient tableClient = _storageAccount.CreateCloudTableClient();
+
+            // Create the CloudTable object that represents the "people" table.
+            CloudTable table = tableClient.GetTableReference("UserRating");
+
+
+            // Construct the query operation for all customer entities where PartitionKey="Smith".
+            TableQuery<UserRatingEntity> query = new TableQuery<UserRatingEntity>().Where(TableQuery.GenerateFilterCondition("RawKey", QueryComparisons.Equal, userName));
+
+
+            // Create a retrieve operation 
+            TableOperation retrieveOperation = TableOperation.Retrieve<UserRatingEntity>("user", userName);
+
+            // Execute the retrieve operation.
+            TableResult retrievedResult = table.Execute(retrieveOperation);
+
+            UserRatingEntity userRatingEntity;
+
+            // if exist - update
+            if (retrievedResult.Result != null)
+            {
+                userRatingEntity = ((UserRatingEntity)retrievedResult.Result);
+                userRatingEntity.Attempted++;
+
+                if (aa.IsCorrect)
+                {
+                    userRatingEntity.Scored++;
+                }
+            }
+            else
+            {
+                userRatingEntity = new UserRatingEntity()
+                {
+                    Attempted = 1,
+                    UserName = userName,
+                    RowKey = userName,
+                    PartitionKey = "user"
+                };
+
+                if (aa.IsCorrect)
+                {
+                    userRatingEntity.Scored = 1;
+                }
+            }
+
+            // Create the TableOperation object that inserts the customer entity.
+            TableOperation insertOperation = TableOperation.InsertOrReplace(userRatingEntity);
+            // Execute the insert operation.
+            table.ExecuteAsync(insertOperation);
+        }
+    }
+}    

@@ -40,6 +40,11 @@ namespace FamilyTrivia.Services
             throw new NotImplementedException();
         }
 
+        public void OnAnswerAttempt(string name, AnswerAttempt aa)
+        {
+            throw new NotImplementedException();
+        }
+
         Task<Guid> IGamesRepositoryService.AddUpdate(TriviaGame game)
         {
             // add a new game

@@ -39,5 +39,10 @@ namespace FamilyTrivia.Services
         {
             throw new NotImplementedException();
         }
+
+        public void OnAnswerAttempt(string name, AnswerAttempt aa)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
