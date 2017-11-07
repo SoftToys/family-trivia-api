@@ -14,7 +14,7 @@ namespace FamilyTrivia.Api.Host.Controllers
 {
     [Authorize(policy: "HasId")]
     [EnableCors("Light")]
-    [Route("api/[controller]")]
+    [Route("api/rating")]
     public class RatingController : Controller
     {
         private IGamesRepositoryService _gamesService;
@@ -25,18 +25,11 @@ namespace FamilyTrivia.Api.Host.Controllers
 
         }
 
-        // GET: /<controller>/
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         // GET api/values
-       /* [HttpGet("rating")]
+
         public Task<IEnumerable<UserRating>> GetUserRating()
-        {
-            //Request.HttpContext.User.Identity.Name - need to have autorization..
+        {        
             return _gamesService.GetUserRating();
-        }*/
+        }
     }
 }

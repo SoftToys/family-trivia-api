@@ -1,20 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0669B1CA-D4FC-4A3C-B350-907009765B8A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{78FCC0E0-8BD5-4728-BB85-3FD283F01602}"
-	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
-	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "FamilyTrivia.Api.Host", "src\FamilyTrivia.Api.Host\FamilyTrivia.Api.Host.xproj", "{943219D2-28A2-4787-AE18-C79CC5E5EA1F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FamilyTrivia.Api.Host", "src\FamilyTrivia.Api.Host\FamilyTrivia.Api.Host.csproj", "{943219D2-28A2-4787-AE18-C79CC5E5EA1F}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "FamilyTrivia.Services", "src\FamilyTrivia.Services\FamilyTrivia.Services.xproj", "{CF9C3D64-4A43-4128-BC25-20902014A9BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FamilyTrivia.Services", "src\FamilyTrivia.Services\FamilyTrivia.Services.csproj", "{CF9C3D64-4A43-4128-BC25-20902014A9BC}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "FamilyTrivia.Contracts", "src\FamilyTrivia.Contracts\FamilyTrivia.Contracts.xproj", "{74F685E8-1848-4975-8159-EB54D8193019}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FamilyTrivia.Contracts", "src\FamilyTrivia.Contracts\FamilyTrivia.Contracts.csproj", "{74F685E8-1848-4975-8159-EB54D8193019}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

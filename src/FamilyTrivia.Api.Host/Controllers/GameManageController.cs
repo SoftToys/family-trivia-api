@@ -31,14 +31,6 @@ namespace FamilyTrivia.Api.Host.Controllers
             return _gamesService.GetByOwner(User.Identity.Name);
         }
 
-        // GET api/values
-        [HttpGet("rating")]
-        public Task<IEnumerable<UserRating>> GetUserRating()
-        {
-            //Request.HttpContext.User.Identity.Name - need to have autorization..
-            return _gamesService.GetUserRating();
-        }
-
 
         // GET api/values/5
         [HttpGet("{id}")]
@@ -69,8 +61,8 @@ namespace FamilyTrivia.Api.Host.Controllers
         }
 
         // POST api/values
-        [HttpPost("bla")]
-
+        [HttpPost("onAnswerAttempt")]
+        
         public void OnAnswerAttempt([FromBody]AnswerAttempt aa)
         {
 

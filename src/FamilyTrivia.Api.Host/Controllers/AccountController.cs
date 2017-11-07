@@ -40,15 +40,12 @@ namespace FamilyTrivia.Api.Host.Controllers
         public async Task<IActionResult> FacebookLogin([FromBody]FacebookAuthResponse facebookAuthResponse)
         {
             var fb = new FacebookClient(facebookAuthResponse.accessToken);
-            dynamic me = fb.Get("me");
-
-
-
+            dynamic me = fb.Get("me?fields=id,name,email");
+            
             string clientMail = me["email"];
             string facebookID = me["id"];
-            string firstName = me["first_name"];
+
             string imgUrl = $"https://graph.facebook.com/{ me["id"] }/picture";
-            string lastName = me["last_name"];
             string lastKnownIP = Request.HttpContext.Connection.RemoteIpAddress.ToString();
 
             Contracts.Models.User c = await _clientService.GetOrCreate(clientMail);
