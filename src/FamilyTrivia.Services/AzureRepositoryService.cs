@@ -72,6 +72,7 @@ namespace FamilyTrivia.Services
             triviaGameEntity.Participates = game.Participates;
             triviaGameEntity.Id = game.Id;
             triviaGameEntity.Name = game.Name;
+            triviaGameEntity.UsersScore = new List<UserRating>();
 
             // Create the TableOperation object that inserts the customer entity.
             TableOperation insertOperation = TableOperation.InsertOrReplace(triviaGameEntity);
@@ -302,61 +303,118 @@ namespace FamilyTrivia.Services
             }
         }
 
-        
+
 
         public void OnAnswerAttempt(string userName, AnswerAttempt aa)
         {
-
-            // Create the table client.
+            // Update current user Score
+            // First - get the TriviaGame from the DB
             CloudTableClient tableClient = _storageAccount.CreateCloudTableClient();
-
-            // Create the CloudTable object that represents the "people" table.
-            CloudTable table = tableClient.GetTableReference("UserRating");
-
-
-            // Construct the query operation for all customer entities where PartitionKey="Smith".
-            TableQuery<UserRatingEntity> query = new TableQuery<UserRatingEntity>().Where(TableQuery.GenerateFilterCondition("RawKey", QueryComparisons.Equal, userName));
-
-
-            // Create a retrieve operation 
-            TableOperation retrieveOperation = TableOperation.Retrieve<UserRatingEntity>("user", userName);
-
-            // Execute the retrieve operation.
+            CloudTable table = tableClient.GetTableReference("Games");
+            //TableQuery<TriviaGameEntity> query = new TableQuery<TriviaGameEntity>().Where(TableQuery.GenerateFilterConditionForGuid("Id", QueryComparisons.Equal, new Guid(aa.GameId)));
+            TableOperation retrieveOperation = TableOperation.Retrieve<TriviaGameEntity>(userName, aa.GameId);
             TableResult retrievedResult = table.Execute(retrieveOperation);
 
-            UserRatingEntity userRatingEntity;
+            TriviaGameEntity triviaGameEnt;
 
-            // if exist - update
+            // if game exist - update user score
             if (retrievedResult.Result != null)
             {
-                userRatingEntity = ((UserRatingEntity)retrievedResult.Result);
-                userRatingEntity.Attempted++;
+                triviaGameEnt = ((TriviaGameEntity)retrievedResult.Result);
+
+                // get the user rating object or create it
+                UserRating ur;
+
+                // if it is the first answer attempt
+                if (triviaGameEnt.UsersScore.ToList().Count == 0)
+                {
+                    ur = new UserRating()
+                    {
+                        UserName = userName
+                    };
+                    triviaGameEnt.UsersScore.Add(ur);
+
+                }
+                else // user already attempted an answer
+                {
+                    ur = triviaGameEnt.UsersScore.SingleOrDefault(p => p.UserName == userName);
+                }
+
+                // update score and attempts.
+                ur.Attempted++;
+                if (aa.IsCorrect)
+                {
+                    ur.Scored++;
+                }
+
+                // update game
+                TableOperation insertOperation = TableOperation.InsertOrReplace(triviaGameEnt);
+                // Execute the insert operation.
+                table.ExecuteAsync(insertOperation);
+
+
+                // Now update the total rating 
+                // Update user Rating
+                // Create the CloudTable object that represents the "people" table.
+                table = tableClient.GetTableReference("UserRating");
+                //TableQuery<UserRatingEntity>  query1 = new TableQuery<UserRatingEntity>().Where(TableQuery.GenerateFilterCondition("RawKey", QueryComparisons.Equal, userName));
+                retrieveOperation = TableOperation.Retrieve<UserRatingEntity>("user", userName);
+                retrievedResult = table.Execute(retrieveOperation);
+
+                // update or create the user rating entity
+                UserRatingEntity userRatingEntity;
+
+                // if exist - update
+                if (retrievedResult.Result != null)
+                {
+                    userRatingEntity = ((UserRatingEntity)retrievedResult.Result);
+                    userRatingEntity.Attempted++;
+
+                    if (aa.IsCorrect)
+                    {
+                        userRatingEntity.Scored++;
+                    }
+                }
+                else
+                {
+                    userRatingEntity = new UserRatingEntity()
+                    {
+                        Attempted = 1,
+                        Scored = 0,
+                        UserName = userName,
+                        RowKey = userName,
+                        PartitionKey = "user"
+                    };
+                }
 
                 if (aa.IsCorrect)
                 {
                     userRatingEntity.Scored++;
                 }
+
+                // Create the TableOperation object that inserts the customer entity.
+                insertOperation = TableOperation.InsertOrReplace(userRatingEntity);
+                // Execute the insert operation.
+                table.ExecuteAsync(insertOperation);
+
             }
             else
             {
-                userRatingEntity = new UserRatingEntity()
-                {
-                    Attempted = 1,
-                    UserName = userName,
-                    RowKey = userName,
-                    PartitionKey = "user"
-                };
-
-                if (aa.IsCorrect)
-                {
-                    userRatingEntity.Scored = 1;
-                }
+                // TODO: error
             }
 
-            // Create the TableOperation object that inserts the customer entity.
-            TableOperation insertOperation = TableOperation.InsertOrReplace(userRatingEntity);
-            // Execute the insert operation.
-            table.ExecuteAsync(insertOperation);
+            
+
+
+
+
+        }
+
+        public void OnGameEnd(TriviaGame game)
+        {
+
+
+
         }
     }
-}    
+}

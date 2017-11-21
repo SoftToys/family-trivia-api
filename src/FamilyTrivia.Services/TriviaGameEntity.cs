@@ -94,5 +94,26 @@ namespace FamilyTrivia.Services
                 Items = JsonConvert.DeserializeObject<IEnumerable<TriviaItem>>(value);
             }
         }
+
+
+        /// <summary>
+        /// Gets or sets the score of each of the users who play this game
+        /// </summary>
+        /// <value>
+        /// The participates.
+        /// </value>
+        [IgnoreProperty]
+        public IList<UserRating> UsersScore { get; internal set; }
+        public string UsersScoreStr
+        {
+            get
+            {
+                return JsonConvert.SerializeObject(UsersScore);
+            }
+            set
+            {
+                UsersScore = JsonConvert.DeserializeObject<IList<UserRating>>(value);
+            }
+        }
     }
 }
